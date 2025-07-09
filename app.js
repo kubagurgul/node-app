@@ -14,6 +14,10 @@ app.post('/webhook', (req, res) => {
     res.status(200).json({ status: 'ok' });
 });
 
+app.get('/', (req, res) => {
+    res.send('It workz!');
+});
+
 app.listen(PORT, () => {
     console.log(`Listening on port ${PORT}`);
 });
