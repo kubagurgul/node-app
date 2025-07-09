@@ -1,11 +1,19 @@
-const express = require('express')
-const app = express()
-const port = 80
+const express = require('express');
+const bodyParser = require('body-parser');
 
-app.get('/', (req, res) => {
-    res.send('Hello World!')
-})
+const app = express();
+const PORT = 5000;
 
-app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
-})
+const AUTH_KEY = '52FB3AZWF5WMS6I';
+
+app.use(bodyParser.json());
+
+app.post('/webhook', (req, res) => {
+    const data = req.body;
+    console.log('Received webhook:', data);
+    res.status(200).json({ status: 'ok' });
+});
+
+app.listen(PORT, () => {
+    console.log(`Listening on port ${PORT}`);
+});
