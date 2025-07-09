@@ -18,7 +18,7 @@ const logger = winston.createLogger({
     transports: [
         new winston.transports.Console(),
         // You can add file transport if needed:
-        // new winston.transports.File({ filename: 'webhook.log' })
+        new winston.transports.File({ filename: 'logs.log' })
     ],
 });
 
