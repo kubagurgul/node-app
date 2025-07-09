@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const winston = require('winston');
 
 const app = express();
-const PORT = process.env.PORT;
+const PORT = process.env.PORT | 80;
 
 const AUTH_KEY = '52FB3AZWF5WMS6I';
 
