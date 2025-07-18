@@ -30,7 +30,7 @@ app.post('/webhook', (req, res) => {
     res.status(200).json({ status: 'ok' });
 });
 
-app.get('/', (req, res) => {
+app.get('/test', (req, res) => {
     res.send('It workz!');
 });
 
