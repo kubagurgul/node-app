@@ -26,7 +26,7 @@ app.use(bodyParser.json());
 
 app.post('/test/webhook', (req, res) => {
     const data = req.body;
-    logger.info('Received webhook data:' + data);
+    logger.info('Received webhook data:' + JSON.stringify(data));
     res.status(200).json({ status: 'ok' });
 });
 
