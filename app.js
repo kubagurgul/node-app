@@ -29,7 +29,8 @@ const EVENT_TYPES = {
 const VISIT_STATUS = {
   0: '📅 BOOKED',
   1: '✅ CHECKED IN',
-  2: '🎯 COMPLETED'
+  2: '🎯 COMPLETED',
+  4: '❌ SIGNED OUT'
 };
 
 const PAYMENT_STATUS = {
@@ -131,10 +132,8 @@ function logClientVisitStatus(data) {
 
   const visitData = data[0];
   const client = visitData.client?.user;
-  const clientName = `${client?.firstName || 'Unknown'} ${client?.lastName
-  || 'User'}`;
-  const serviceName = visitData.scheduleEvent?.scheduleMeta?.classService?.name
-      || 'Unknown Service';
+  const clientName = `${client?.firstName || 'Unknown'} ${client?.lastName || 'User'}`;
+  const serviceName = visitData.scheduleEvent?.scheduleMeta?.classService?.name || 'Unknown Service';
 
   let startTime = 'Unknown time';
   if (visitData.scheduleEvent?.startsAt) {
@@ -145,19 +144,29 @@ function logClientVisitStatus(data) {
     }
   }
 
-  const status = VISIT_STATUS[visitData.status]
-      || `❓ Status ${visitData.status}`;
-  const pricingOption = visitData.clientPricingOption?.qualifiedName
-      || 'No pricing info';
+  const status = VISIT_STATUS[visitData.status] || `❓ Status ${visitData.status}`;
+  const pricingOption = visitData.clientPricingOption?.qualifiedName || 'No pricing info';
   const remainingVisits = visitData.clientPricingOption?.remain;
 
   logger.info(`${status} - ${clientName} for "${serviceName}" at ${startTime}`);
-  logger.info(`💳 Package: ${pricingOption}${remainingVisits !== undefined
-      ? ` (${remainingVisits} remaining)` : ''}`);
+
+  // Special handling for sign out status
+  if (visitData.status === 4) {
+    logger.info(`🔄 Client cancelled their booking`);
+
+    // Check if refund is available
+    if (visitData.checkIfSessionValueIsReturnable?.isReturnable) {
+      logger.info(`💰 Session value is returnable`);
+    } else {
+      const reason = visitData.checkIfSessionValueIsReturnable?.reason || 'Unknown reason';
+      logger.info(`❌ Session value not returnable: ${reason}`);
+    }
+  }
+
+  logger.info(`💳 Package: ${pricingOption}${remainingVisits !== undefined ? ` (${remainingVisits} remaining)` : ''}`);
 
   if (visitData.isOnWaitingList) {
-    logger.info(`⏳ Position on waiting list: ${visitData.waitingListPosition
-    || 'Unknown'}`);
+    logger.info(`⏳ Position on waiting list: ${visitData.waitingListPosition || 'Unknown'}`);
   }
 }
 
